@@ -1,0 +1,24 @@
+server:
+  port: 9001
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+spring:
+  application:
+    name: edu-gateway-boot
+  cloud:
+    gateway:
+      routes:
+        - id: edu-routes-ad # \u8DEF\u7531\u540D
+          uri: lb://edu-ad-boot  # \u53BB\u6CE8\u518C\u4E2D\u5FC3\u67E5\u627E\u7684\u5FAE\u670D\u52A1\u540D
+          predicates: # \u5F53\u65AD\u8A00\u6210\u529F\u540E\uFF0C\u4EA4\u7ED9\u67D0\u4E00\u4E2A\u5FAE\u670D\u52A1\u5904\u7406\u65F6\u4F7F\u7528\u7684\u662F\u8F6C\u53D1
+            - Path=/ad/**
+          filters:
+            - StripPrefix=1   # \u53BB\u6389uri\u4E2D\u7684\u7B2C\u4E00\u90E8\u5206
